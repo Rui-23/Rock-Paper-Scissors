@@ -1,19 +1,20 @@
-function getPlayerChoice() {
-  let userInput = prompt("Your move:");
-  if (userInput === null) {
-    alert("You did't make your move!");
-    return userInput = "No move";
-  } 
+const buttons = document.querySelectorAll('button');
+const results = document.querySelector('.result');
+const scoreOfPlayer = document.querySelector('#playerScore');
+const scoreOfComputer = document.querySelector('#computerScore');
+const btnWrapper = document.querySelector('.btnContainer');
+const replay = document.querySelector('.replay');
 
-  userInput = userInput.toLowerCase();
-  if (userInput === 'rock' || 
-      userInput === 'paper' || 
-      userInput === 'scissors') {
-    return userInput;
-  } else {
-    alert("Invalid Move! Try again.");
-    return userInput = "Wrong move";
-  }
+let playerScore = 0;
+let computerScore = 0;
+
+for (i = 0; i < 3; i++) {
+  buttons[i].addEventListener('click', (e) => {
+    let playerSelection = e.target.textContent.toLowerCase();
+    //console.log(playerSelection);
+    let computerSelection = getComputerChoice();
+    playRound(playerSelection, computerSelection);
+  });
 }
 
 function getComputerChoice() {
@@ -35,33 +36,49 @@ function randomChoice() {
 }
 
 function playRound(playerSelection, computerSelection) {
-  let result = ' ';
-
+  let result;
   if (playerSelection === 'rock' && computerSelection === 'paper') {
     result = "Computer wins!";
+    computerScore += 1;
   } else if (playerSelection === 'rock' && computerSelection === 'scissors') {
-    result = "You win!🎉🎉🎉";
+    result = "You win!";
+    playerScore += 1;
   } else if (playerSelection === 'paper' && computerSelection === 'rock') {
-    result = "You win!🎉🎉🎉";
+    result = "You win!";
+    playerScore += 1;
   } else if (playerSelection === 'paper' && computerSelection === 'scissors') {
     result = "Computer wins!";
+    computerScore += 1;
   } else if (playerSelection === 'scissors' && computerSelection === 'rock') {
     result = "Computer wins!";
+    computerScore += 1;
   } else if (playerSelection === 'scissors' && computerSelection === 'paper') {
-    result = "You win!🎉🎉🎉";
-  } else if (playerSelection === 'rock' && computerSelection === 'rock') {
+    result = "You win!";
+    playerScore += 1;
+  } else if (playerSelection === computerSelection) {
     result = "It's a tie!";
-  } else if (playerSelection === 'paper' && computerSelection === 'paper') {
-    result = "It's a tie!";
-  } else if (playerSelection === 'scissors' && computerSelection === 'scissors') {
-    result = "It's a tie!"
   }
-  
+
+  /*
   console.log("Your move: " + playerSelection);
   console.log("Computer's move: " + computerSelection);
   console.log(result);
+  */
+ 
+  scoreOfPlayer.textContent = "Your total score: " + playerScore;
+  scoreOfComputer.textContent = "Computer's total score: "+ computerScore;
   
- showResults(playerSelection, computerSelection, result);
+  if (playerScore < 5 && computerScore < 5) {
+    showResults(playerSelection, computerSelection, result);
+  } else if (playerScore > computerScore && playerScore === 5) {
+    results.textContent = "The final winner is You! 🙌"
+    btnWrapper.style.display = "none";
+    playAgain();
+  } else if (computerScore > playerScore && computerScore === 5) {
+    results.textContent = "The final winner is Computer! 👀"
+    btnWrapper.style.display = "none";
+    playAgain();
+  }
 }
 
 function showResults(playerSelection, computerSelection, result) {
@@ -80,31 +97,18 @@ function showResults(playerSelection, computerSelection, result) {
   } else if (computerSelection === 'scissors') {
     computerSelection = '✌🏻';
   }
-  playerChoice.textContent += playerSelection;
-  computerChoice.textContent += computerSelection;
-  resultPanel.textContent += result;
-  resultPanel.style.backgroundColor = "pink";
+
+  results.textContent = `Results: You select ${playerSelection}. Computer chooses ${computerSelection}. ${result}`;
 }
 
-function playGame(rounds) {
-  for (i = 1; i <= rounds;i++) {
-    console.log("Round " + i);
-    let playerSelection = getPlayerChoice();
-    let computerSelection = getComputerChoice();
-    playRound(playerSelection, computerSelection);
-  }    
+function playAgain() {
+  replay.style.display = "block";
+  replay.addEventListener('click', () => {
+    playerScore = computerScore = 0;
+    scoreOfPlayer.textContent = "Your score: " + playerScore;
+    scoreOfComputer.textContent = "Computer's score: "+ computerScore;
+    results.textContent = "Results:"
+    btnWrapper.style.display = "block";
+    replay.style.display = "none";
+  });
 }
-
-let playerChoice = document.querySelector('.playerChoice');
-let computerChoice = document.querySelector('.computerChoice');
-let resultPanel = document.querySelector('.result');
-const btn = document.querySelector('button');
-const div = document.querySelector('div');
-const para = document.createElement('p');
-div.append(para);
-
-
-//const playerSelection = getPlayerChoice();
-//const computerSelection = getComputerChoice();
-//playRound(playerSelection, computerSelection);
-btn.addEventListener('click', (e) => playGame(2));
